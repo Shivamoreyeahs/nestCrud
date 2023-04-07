@@ -19,13 +19,25 @@ export class ProductsService {
       description:desc,
       price:price,
     })
+
    const result = await newProduct.save();
    console.log(result); 
-   return 'prodId';
-  }
 
-  getProducts() {
-    return [...this.products];
+  //  return 'prodId';
+  //  return newProduct;
+  // res.send({
+  //   newProduct
+  // });
+
+  }
+  // async getProductById(:id){
+  //   const getSingleUser = await this.productSchema.findOne()
+  // }
+
+ async getProducts() {
+    const alluser = await this.productSchema.find();
+    console.log(alluser);
+    return alluser;
   }
 
   getSingleProduct(productId: string) {
@@ -62,3 +74,5 @@ export class ProductsService {
     return [product, productIndex];
   }
 }
+
+
