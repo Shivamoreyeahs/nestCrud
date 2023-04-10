@@ -1,8 +1,10 @@
-import { Injectable, NotFoundException, } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserInterface } from './interface/user.interface';
 import { userDto } from './dto/user.dto';
+import { updateUserDto } from './dto/updateUser.dto';
+import * as bcrypt from 'bcrypt';
 
 // @Injectable()
 // export class UserService {
@@ -13,60 +15,69 @@ import { userDto } from './dto/user.dto';
 
 // constructor(@InjectModel(Cat.name) private catModel: Model<Cat>) {}
 
+
+// Here, we used the @InjectModel() decorator to inject the userModel into the UsersService.
 @Injectable()
 export class UserService {
   constructor(@InjectModel('User') private userModel: Model<UserInterface>) {}
 
-// Register new user  
-  async registerUser(userDto:userDto){
-      const user = new this.userModel(userDto);
-      console.log(user);
-      return await user.save();
+
+
+  // Register new user
+  async registerUser(userDto: userDto,) {
+
+    const user = new this.userModel(userDto);
+   
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password,salt);
+    console.log(user);
+    return await user.save();
   }
 
-// // Get user api
-//  async getUser(){
-//  return await this.userModel.find().exec();
-//  }
 
-// get user using try catch and exception filter 
-async getUser(){
-  const userData = await this.userModel.find();
-  if(!userData || userData.length==0){
-    throw new NotFoundException("User not found")
+
+
+  // // Get user api
+  //  async getUser(){
+  //  return await this.userModel.find().exec();
+  //  }
+
+  // get user using try catch and exception filter
+  async getUser() {
+    const userData = await this.userModel.find();
+    if (!userData || userData.length == 0) {
+      throw new NotFoundException('User not found');
+    }
+    return userData;
   }
-  return userData;
+
+  //Get user by id
+  async getUserById(userId: string) {
+    const userData = await this.userModel.findById(userId);
+    if (!userData) {
+      throw new NotFoundException(`User ${userId} not found`);
+    }
+    return userData;
+  }
+
+  //  UpdateUser by id
+  async updateUser(userId: string, updateUserDto: updateUserDto) {
+    console.log(userId);
+    const updateUser = await this.userModel.findByIdAndUpdate(userId,updateUserDto,{ new: true },);
+    // console.log(updateUser,"THis is service updateuser ")
+    if (!updateUser) {
+      throw new NotFoundException(`User #${userId} not found`);
+    }
+    return updateUser;
+  }
+
+  // delete user from id
+  async deleteUserbyId(userId: string) {
+    const deleteUser = await this.userModel.findByIdAndDelete(userId);
+
+    if (!deleteUser) {
+      throw new NotFoundException(`User #${userId} not found`);
+    }
+    return deleteUser;
+  }
 }
-
-
-//Get user by id
-async getUserById(userId:string){
-  const userData = await this.userModel.findById(userId);
-  if(!userData){
-    throw new NotFoundException(`User ${userId} not found`);
-  }
-  return userData;
-}
-
-
-
-//  UpdateUser by id 
-async updateUser(userId:string,){
-  const updateUser = await this.userModel.findByIdAndUpdate(userId);
-  if(!updateUser){
-    throw new NotFoundException(`User #${userId} not found`);
-  }
-  return updateUser;
-}
-
-} 
-
-
-
-// async updateStudent(studentId: string, updateStudentDto: UpdateStudentDto): Promise<IStudent> {
-//       const existingStudent = await        this.studentModel.findByIdAndUpdate(studentId, updateStudentDto, { new: true });
-//      if (!existingStudent) {
-//        throw new NotFoundException(`Student #${studentId} not found`);
-//      }
-//      return existingStudent;
-//   }

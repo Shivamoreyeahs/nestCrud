@@ -30,6 +30,7 @@ export class ProductsService {
   // });
 
   }
+  
   // async getProductById(:id){
   //   const getSingleUser = await this.productSchema.findOne()
   // }
