@@ -1,10 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException,BadRequestException ,HttpException, HttpStatus,} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserInterface } from './interface/user.interface';
 import { userDto } from './dto/user.dto';
 import { updateUserDto } from './dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { AuthGuard } from '../auth/auth.guard';
 
 // @Injectable()
 // export class UserService {
@@ -19,14 +21,28 @@ import * as bcrypt from 'bcrypt';
 // Here, we used the @InjectModel() decorator to inject the userModel into the UsersService.
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('User') private userModel: Model<UserInterface>) {}
+  constructor(@InjectModel('User') private userModel: Model<UserInterface>, private jwtService: JwtService) {}   //JwtService provider
 
 
+  async getUserByEmail(email: string) {
+    return this.userModel.findOne({
+        email
+      })
+      .exec();
+  }
 
-  // Register new user
+
+  // Register new user  
   async registerUser(userDto: userDto,) {
 
     const user = new this.userModel(userDto);
+// console.log(user);
+    // check if user exists
+    const checkUser = await this.getUserByEmail(user.email);
+    // console.log(checkUser)
+    if (checkUser) {
+      throw new BadRequestException();
+    }
    
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password,salt);
@@ -51,6 +67,23 @@ export class UserService {
     return userData;
   }
 
+
+
+  async getUsers({ email, password }) {
+    return this.userModel.findOne({
+      email,
+      password,
+    });
+  }
+
+
+
+
+
+
+
+
+
   //Get user by id
   async getUserById(userId: string) {
     const userData = await this.userModel.findById(userId);
@@ -61,6 +94,7 @@ export class UserService {
   }
 
   //  UpdateUser by id
+
   async updateUser(userId: string, updateUserDto: updateUserDto) {
     console.log(userId);
     const updateUser = await this.userModel.findByIdAndUpdate(userId,updateUserDto,{ new: true },);
@@ -80,4 +114,26 @@ export class UserService {
     }
     return deleteUser;
   }
+
+
+  async loginUser(UserDTO: userDto) {
+    const { email, password } = UserDTO;
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      throw new HttpException('user doesnt exists', HttpStatus.BAD_REQUEST);
+    }
+    if (await bcrypt.compare(password, user.password)) {
+
+      const payload = { username: user.email, sub: user._id };
+      const  access_token = await this.jwtService.signAsync(payload)      //signAsync() function to generate our JWT 
+        // console.log(access_token, 'access_token');
+     
+     return {access_token, user};
+    } 
+    else {
+      throw new HttpException('invalid credential', HttpStatus.BAD_REQUEST);
+    }  
+  }
+
+
 }

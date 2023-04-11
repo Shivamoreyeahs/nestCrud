@@ -8,14 +8,19 @@ import {
   Body,
   HttpStatus,
   Param,
+  UseGuards,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+// import * as bcrypt from 'bcrypt';
+// import { AuthGuard } from '@nestjs/passport';
+
 
 
 import { UserService } from './user.service';
 import { userDto } from './dto/user.dto';
 import { updateUserDto } from './dto/updateUser.dto';
 import { response } from 'express';
+import { AuthGuard } from '../auth/auth.guard';
+// import { LoginDTO } from './dto/login.dto';
 
 @Controller('user')
 export class UserController {
@@ -39,6 +44,7 @@ export class UserController {
   // }
 
   //// get user using try catch and exception filter
+  
   @Get('/getUser')
   async getUser(@Res() response) {
     try {
@@ -52,7 +58,9 @@ export class UserController {
   }
 
   // // GEt user by id
+  // @UseGuards(AuthGuard('jwt'))
   @Get('/:id')
+  @UseGuards(AuthGuard)
   async getUserById(@Res() response, @Param('id') userId: string) {
     try {
       const userById = await this.userServices.getUserById(userId);
@@ -65,7 +73,9 @@ export class UserController {
   }
 
   //   Update User with ID
+  // @UseGuards(AuthGuard('jwt'))
   @Put('/update/:id')
+  @UseGuards(AuthGuard)
   async updateUser(
     @Res() response,
     @Param('id') userId: string,
@@ -86,8 +96,11 @@ export class UserController {
     }
   }
 
+
   //Delet user api
+ 
   @Delete('/delete/:id')
+  @UseGuards(AuthGuard)
   async deleteUserbyId(@Res() response, @Param('id') userId: string) {
     try {
       const deleteUser = await this.userServices.deleteUserbyId(userId);
@@ -98,4 +111,19 @@ export class UserController {
       return response.status(err.status).json(err.response);
     }
   }
-}
+
+// // Login user 
+  @Post('/login')
+  async login(@Body() userDto: userDto) {
+    const user = await this.userServices.loginUser(userDto);
+    // const payload = {
+    //   email: user.email,
+    // };
+    // const token = await this.authService.signPayload(payload);
+    // return { user, token};
+    return user;
+  }
+
+
+
+} 
