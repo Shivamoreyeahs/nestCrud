@@ -19,12 +19,28 @@ export class AuthGuard implements CanActivate {
 
 
 
-    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+    const roles = this.reflector.get<string>('roles', context.getHandler());
     console.log(roles,"roles");
  
 
     //   console.log(token, 'token');
-    if(roles.includes("admin")){
+    if(roles === "admin"){
+    if (!token) {
+      throw new UnauthorizedException();
+    }
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: 'MY-TOKEN',
+      });
+      // 💡 We're assigning the payload to the request object here
+      // so that we can access it in our route handlers
+      request['user'] = payload;
+    } catch {
+      throw new UnauthorizedException();
+    }
+    return true;
+  }
+  if(roles === "user"){
     if (!token) {
       throw new UnauthorizedException();
     }
@@ -45,6 +61,9 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException();
   }
 }
+
+
+
 
   }
   private extractTokenFromHeader(request: Request): string | undefined {
