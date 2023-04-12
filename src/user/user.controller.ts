@@ -18,9 +18,15 @@ import {
 import { UserService } from './user.service';
 import { userDto } from './dto/user.dto';
 import { updateUserDto } from './dto/updateUser.dto';
-import { response } from 'express';
+
+
 import { AuthGuard } from '../auth/auth.guard';
-// import { LoginDTO } from './dto/login.dto';
+
+import { Roles } from 'src/auth/roles.decorator';
+
+import { Role } from 'src/auth/role.enum';
+
+
 
 @Controller('user')
 export class UserController {
@@ -58,8 +64,8 @@ export class UserController {
   }
 
   // // GEt user by id
-  // @UseGuards(AuthGuard('jwt'))
   @Get('/:id')
+  @Roles(Role.Admin)  // 💡 This is we pass the metadata
   @UseGuards(AuthGuard)
   async getUserById(@Res() response, @Param('id') userId: string) {
     try {
