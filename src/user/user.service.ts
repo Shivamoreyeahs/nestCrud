@@ -21,6 +21,7 @@ import { AuthGuard } from '../auth/auth.guard';
 // Here, we used the @InjectModel() decorator to inject the userModel into the UsersService.
 @Injectable()
 export class UserService {
+  
   constructor(@InjectModel('User') private userModel: Model<UserInterface>, private jwtService: JwtService) {}   //JwtService provider
 
 

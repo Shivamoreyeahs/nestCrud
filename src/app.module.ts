@@ -1,3 +1,5 @@
+// import * as dotenv from 'dotenv';
+// dotenv.config();
 import { Module } from '@nestjs/common';
 
 import { AppService } from './app.service';
@@ -9,11 +11,19 @@ import { ProductsModule } from './products/products.module';
 import { UserModule } from './user/user.module';
 import { Connection } from 'mongoose';
 
+
+import { ConfigModule } from '@nestjs/config'; //this package is for config module proess.env
+ 
+
+
+
 @Module({
   imports: [
+    ConfigModule.forRoot(),     //this package is for config module proess.env 
     ProductsModule,
-    MongooseModule.forRoot('mongodb://0.0.0.0:27017',{dbName:'nestcrudShiv'}),
-    
+    // MongooseModule.forRoot('mongodb://0.0.0.0:27017',{dbName:'nestcrudShiv'}),
+    MongooseModule.forRoot(process.env.mongoUrl), 
+      
   ],
   controllers: [AppController],
   providers: [AppService],
