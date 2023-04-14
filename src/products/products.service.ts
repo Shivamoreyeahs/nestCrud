@@ -12,12 +12,13 @@ export class ProductsService {
 
  constructor(@InjectModel('Product') private readonly productSchema:Model<Product>) {}
 
- async insertProduct(title: string, desc: string, price: number) {
+ async insertProduct(title: string, desc: string, price: number,userId:string) {
     
     const newProduct = new this.productSchema({
       title:title,
       description:desc,
       price:price,
+      userId:userId,
     })
 
    const result = await newProduct.save();

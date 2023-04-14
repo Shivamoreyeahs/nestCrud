@@ -6,7 +6,7 @@ import { userDto } from './dto/user.dto';
 import { updateUserDto } from './dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { AuthGuard } from '../auth/auth.guard';
+// import { AuthGuard } from '../auth/auth.guard';
 
 // @Injectable()
 // export class UserService {

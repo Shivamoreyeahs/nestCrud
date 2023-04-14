@@ -19,11 +19,13 @@ export class ProductsController {
     @Body('title') prodTitle: string,
     @Body('description') prodDesc: string,
     @Body('price') prodPrice: number,
+    @Body('userId') userId: string,
   ) {
     const generatedId = this.productsService.insertProduct(
       prodTitle,
       prodDesc,
       prodPrice,
+      userId,
     );
     return { id: generatedId };
   }
