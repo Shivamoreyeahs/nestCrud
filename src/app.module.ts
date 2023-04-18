@@ -8,7 +8,7 @@ import {InjectConnection, MongooseModule} from '@nestjs/mongoose';
 
 import { AppController } from './app.controller';
 import { ProductsModule } from './products/products.module';
-import { UserModule } from './user/user.module';
+// import { UserModule } from './user/user.module';
 import { Connection } from 'mongoose';
 
 

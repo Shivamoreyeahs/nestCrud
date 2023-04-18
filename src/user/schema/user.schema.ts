@@ -4,7 +4,7 @@ import {Prop ,Schema,SchemaFactory} from '@nestjs/mongoose';
 // export type userDocument = User & Document;
 
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true })  //{ timestamps: true },  insite hta schema decorators 
 export class User {
 
     @Prop()    //  @Prop({ required: true })

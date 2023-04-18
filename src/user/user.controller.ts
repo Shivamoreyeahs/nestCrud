@@ -9,6 +9,7 @@ import {
   HttpStatus,
   Param,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 // import * as bcrypt from 'bcrypt';
 // import { AuthGuard } from '@nestjs/passport';
@@ -25,6 +26,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
 
 import { Role } from 'src/auth/role.enum';
+import { UserInterceptor } from './user.interceptor';
 
 
 
@@ -33,6 +35,7 @@ export class UserController {
   constructor(private readonly userServices: UserService) {}
 
   @Post('/crateUser')
+  @UseInterceptors(UserInterceptor)   //use of interceotor  using @UserInterceptor decorator
   newUser(@Res() res,
    @Body() userDto: userDto,
    @Body('email') email: string,
@@ -62,6 +65,7 @@ export class UserController {
       return response.status(err.status).json(err.response);
     }
   }
+  
 
   // // GEt user by id
   @Get('/:id')
@@ -129,7 +133,5 @@ export class UserController {
     // return { user, token};
     return user;
   }
-
-
 
 } 
