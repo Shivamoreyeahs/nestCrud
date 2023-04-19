@@ -8,3 +8,4 @@ export interface UserInterface extends Document{
     password:string;
     address:string;
 }
+

@@ -6,6 +6,7 @@ import { userDto } from './dto/user.dto';
 import { updateUserDto } from './dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+// import { User } from './schema/user.schema';
 // import { AuthGuard } from '../auth/auth.guard';
 
 // @Injectable()
@@ -33,23 +34,51 @@ export class UserService {
   }
 
 
-  // Register new user  
-  async registerUser(userDto: userDto,) {
 
+  // Register new user  
+//   async registerUser(userDto: userDto): Promise<object> {
+
+//     const user = new this.userModel(userDto);
+// // console.log(user);
+//     // check if user exists
+//     const checkUser = await this.getUserByEmail(user.email);
+//     // console.log(checkUser)
+//     if (checkUser) {
+//       throw new BadRequestException();
+//     }
+   
+//     const salt = await bcrypt.genSalt(10);
+//     user.password = await bcrypt.hash(user.password,salt);
+//     console.log(user);
+
+//     const usersaved = await user.save();
+//     console.log(usersaved, "user saved");
+//    return {usersaved};
+//   }
+
+
+
+
+
+// Shivam new api for fast response 
+  async registerUser(userDto: userDto){
     const user = new this.userModel(userDto);
-// console.log(user);
+
     // check if user exists
     const checkUser = await this.getUserByEmail(user.email);
-    // console.log(checkUser)
-    if (checkUser) {
-      throw new BadRequestException();
-    }
    
+    if (checkUser) {
+      throw new BadRequestException(`User ${checkUser.email} already exists please enter new email address.!`);
+    }
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password,salt);
-    console.log(user);
-    return await user.save();
+
+     await user.save();
+   return {userSaved: user,
+  data: "user saved successfully"}
   }
+
+
 
 
 

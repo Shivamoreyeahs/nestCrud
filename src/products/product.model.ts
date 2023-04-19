@@ -22,6 +22,8 @@ export const productSchema = new mongoose.Schema({  //  💡 Alternatively, if y
 { timestamps: true }
 );
 
+
+
 export interface Product extends Document {
   id: string;
   title: string;

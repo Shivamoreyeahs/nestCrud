@@ -26,7 +26,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
 
 import { Role } from 'src/auth/role.enum';
-import { UserInterceptor } from './user.interceptor';
+// import { UserInterceptor } from './user.interceptor';
 
 
 
@@ -34,18 +34,31 @@ import { UserInterceptor } from './user.interceptor';
 export class UserController {
   constructor(private readonly userServices: UserService) {}
 
-  @Post('/crateUser')
-  @UseInterceptors(UserInterceptor)   //use of interceotor  using @UserInterceptor decorator
-  newUser(@Res() res,
-   @Body() userDto: userDto,
-   @Body('email') email: string,
-   @Body('password') password: string,) {
+//   @Post('/crateUser')
+//   // @UseInterceptors(UserInterceptor)   //use of interceotor  using @UserInterceptor decorator
+// async  newUser(@Res() res,
+//    @Body() userDto: userDto,
+//    @Body('email') email: string,
+//    @Body('password') password: string,) {
 
-    const user = this.userServices.registerUser(userDto);
-    return res.status(HttpStatus.OK).json({
-      response: { 'User added ': user },
-    });
-  }
+//   const user =  await this.userServices.registerUser(userDto);
+//   console.log(user, 'registered');
+//     return res.status(HttpStatus.OK).json({
+//          data : user,
+//          message: 'User registration successful'
+//     });
+
+//   }
+
+// Shivam new api for fast response 
+@Post('/crateUser')
+// @UseInterceptors(UserInterceptor)   //use of interceotor  using @UserInterceptor decorator
+ newUser(@Body() userDto: userDto){
+   return this.userServices.registerUser(userDto);
+ }
+
+
+
 
   // @Get('/getUser')
   // async getUser(){
